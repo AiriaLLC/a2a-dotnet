@@ -38,12 +38,12 @@ jobs:
         run: dotnet build --no-restore --configuration Release
 
       - name: dotnet test with coverage
-        run: dotnet test --logger trx --no-build --configuration Release /p:CollectCoverage=true /p:CoverletOutputFormat=opencover --filter FullyQualifiedName~Tests
+        run: dotnet test --logger trx --no-build --configuration Release --collect:"XPlat Code Coverage" --results-directory ./TestResults --filter FullyQualifiedName~Tests
 
       - name: ReportGenerator
         uses: im-open/code-coverage-report-generator@4
         with:
-          reports: '**/coverage.opencover.xml'
+          reports: './TestResults/**/coverage.cobertura.xml'
           targetdir: './coverage-results'
           title: dotnet code coverage
           reporttypes: 'Html;MarkdownSummary'
