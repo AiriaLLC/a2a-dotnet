@@ -1,0 +1,71 @@
+# This workflow will build a .NET project
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
+
+name: A2A.Client - Build and Test
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+  actions: read
+  checks: write
+  pull-requests: write
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 9.0.x
+
+      - name: Clean
+        run: dotnet clean
+
+      - name: Restore dependencies
+        run: dotnet restore -v diagnostic --no-cache
+
+      - name: Build
+        run: dotnet build --no-restore --configuration Release
+
+      - name: dotnet test with coverage
+        run: dotnet test --logger trx --no-build --configuration Release /p:CollectCoverage=true /p:CoverletOutputFormat=opencover --filter FullyQualifiedName~Tests
+
+      - name: ReportGenerator
+        uses: im-open/code-coverage-report-generator@4
+        with:
+          reports: '**/coverage.opencover.xml'
+          targetdir: './coverage-results'
+          title: dotnet code coverage
+          reporttypes: 'Html;MarkdownSummary'
+          assemblyfilters: '-xunit*;-Dapper;'
+          classfilters: '-Startup;-Program;'
+
+      - name: Process Coverage Summary
+        uses: im-open/process-code-coverage-summary@v2.3.0
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          summary-file: './coverage-results/Summary.md'
+          report-name: 'A2A Code Coverage'
+          check-name: 'code coverage'
+          create-status-check: true
+          create-pr-comment: true
+          ignore-threshold-failures: false
+          line-threshold: 92
+          branch-threshold: 0
+
+      - name: Append coverage report to job summary
+        run: |
+          echo '### Code Coverage Summary' >> $GITHUB_STEP_SUMMARY
+          cat ./coverage-results/Summary.md >> $GITHUB_STEP_SUMMARY
+
+

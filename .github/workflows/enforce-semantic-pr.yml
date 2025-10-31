@@ -1,0 +1,17 @@
+name: "Enforce Semantic PR"
+
+on:
+  pull_request_target:
+    types:
+      - opened
+      - edited
+      - synchronize
+
+permissions:
+  pull-requests: read
+
+jobs:
+  call-enforce-semantic-pr:
+    name: Enforce Semantic PR Title
+    uses: AiriaLLC/airia-github-workflows/.github/workflows/enforce-semantic-pr.yml@v2.2.0
+    secrets: inherit

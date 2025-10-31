@@ -35,7 +35,7 @@
         </PackageReference>
         <PackageReference Include="Microsoft.Extensions.AI.Abstractions" />
         <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
-        <PackageReference Include="System.Linq.AsyncEnumerable" />
+        <PackageReference Include="System.Linq.Async" />
         <PackageReference Include="System.Net.ServerSentEvents" />
         <PackageReference Include="Microsoft.VisualStudio.Threading.Analyzers">
             <PrivateAssets>all</PrivateAssets>

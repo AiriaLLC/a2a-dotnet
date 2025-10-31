@@ -1,0 +1,32 @@
+name: A2A - Publish
+
+on:
+  workflow_dispatch:
+  workflow_run:
+    workflows: ["A2A - Build and Test"]
+    branches: ["main"]
+    types:
+      - completed
+
+permissions:
+  contents: write
+  actions: write
+  checks: write
+
+jobs:
+  publish-packages:
+    strategy:
+      matrix:
+        package:
+          - name: A2A
+            path: src/A2A/A2A.csproj
+    uses: AiriaLLC/airia-github-workflows/.github/workflows/publish-dotnet-package.yml@main
+    with:
+        package-name: ${{ matrix.package.name }}
+        package-path: ${{ matrix.package.path }}
+        dotnet-version: 9.0.x
+    secrets:
+      artifactory-reader-username: ${{ secrets.AIRIA_ARTIFACTORY_READER_USERNAME }}
+      artifactory-reader-password: ${{ secrets.AIRIA_ARTIFACTORY_READER_PASSWORD }}
+      artifactory-writer-username: ${{ secrets.AIRIA_ARTIFACTORY_WRITER_USERNAME }}
+      artifactory-writer-password: ${{ secrets.AIRIA_ARTIFACTORY_WRITER_PASSWORD }}
