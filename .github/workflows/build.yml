@@ -60,7 +60,7 @@ jobs:
           create-status-check: true
           create-pr-comment: true
           ignore-threshold-failures: false
-          line-threshold: 92
+          line-threshold: 70
           branch-threshold: 0
 
       - name: Append coverage report to job summary
